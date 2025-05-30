@@ -1,84 +1,129 @@
 "use client";
 
-import styled from 'styled-components';
-import { Mail, MapPin, Phone, Calendar, CheckCircle } from 'lucide-react';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Mail, MapPin, Phone, Calendar, CheckCircle, X, CreditCard } from 'lucide-react';
 
-export default function ContactSection() {
-  const controls = useAnimation();
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
+// TypeScript interfaces
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
 
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    }
-  }, [controls, inView]);
+interface PaymentData {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+}
 
-  const fadeUpVariant = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
+interface FormErrors {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
 
-  const slideLeftVariant = {
-    hidden: { opacity: 0, x: -60 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: 'easeOut' },
-    },
-  };
+interface PaymentErrors {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+}
 
-  const slideRightVariant = {
-    hidden: { opacity: 0, x: 60 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: 'easeOut' },
-    },
-  };
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
 
-  const scaleUpVariant = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.5, ease: 'easeOut' },
-    },
-  };
+interface InitializeBookingResponse {
+  success: boolean;
+  orderId: string;
+  amount: number;
+  currency: string;
+  razorpayKeyId: string;
+  paymentId: string;
+  message?: string;
+  error?: string;
+}
 
-  const [formData, setFormData] = useState({
+interface VerifyPaymentResponse {
+  success: boolean;
+  message?: string;
+  schedulingUrl?: string;
+  bookingId?: string;
+  error?: string;
+}
+
+type LoaderState = 'loading' | 'success' | 'error';
+type ValidatedField = 'name' | 'customerName' | 'email' | 'customerEmail' | 'phone' | 'customerPhone' | 'message';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
+export default function ContactSection(): JSX.Element {
+  // API Configuration
+  // Note: Make sure your backend server at localhost:3000 has CORS enabled
+  // to allow requests from your React app domain
+  const API_BASE_URL: string = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3001' 
+    : ''; // Use relative URLs in production
+  
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [loaderState, setLoaderState] = useState<LoaderState>('loading');
+  const [loaderText, setLoaderText] = useState<string>('Processing...');
+  const [loaderSubtext, setLoaderSubtext] = useState<string>('Please wait while we process your request');
+  const [currentPaymentId, setCurrentPaymentId] = useState<string | null>(null);
+  const [calendlyUrl, setCalendlyUrl] = useState<string>('');
+  const [countdownTimer, setCountdownTimer] = useState<NodeJS.Timeout | null>(null);
+
+  // Contact form state
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
     message: '',
   });
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormErrors>({
     name: '',
     email: '',
     phone: '',
     message: '',
   });
 
-  const [showToast, setShowToast] = useState(false);
+  // Payment form state
+  const [paymentData, setPaymentData] = useState<PaymentData>({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+  });
 
-  const validateField = (name: string, value: string) => {
+  const [paymentErrors, setPaymentErrors] = useState<PaymentErrors>({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+  });
+
+  const validateField = (name: ValidatedField, value: string): string => {
     let error = '';
     switch (name) {
       case 'name':
+      case 'customerName':
         if (!value.trim()) error = 'Name is required';
         break;
       case 'email':
+      case 'customerEmail':
         if (!value) error = 'Email is required';
         else if (!/\S+@\S+\.\S+/.test(value)) error = 'Invalid email address';
         break;
       case 'phone':
+      case 'customerPhone':
         if (!value) error = 'Phone is required';
         else if (!/^\d{10}$/.test(value)) error = 'Phone must be 10 digits';
         break;
@@ -90,449 +135,543 @@ export default function ContactSection() {
     return error;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    const error = validateField(name, value);
+    const error = validateField(name as ValidatedField, value);
     setErrors(prev => ({ ...prev, [name]: error }));
   };
 
-  const isFormValid = Object.values(errors).every(err => !err) &&
+  const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = e.target;
+    setPaymentData(prev => ({ ...prev, [name]: value }));
+    const error = validateField(name as ValidatedField, value);
+    setPaymentErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const isFormValid: boolean = Object.values(errors).every(err => !err) &&
                       Object.values(formData).every(val => val.trim() !== '');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const isPaymentFormValid: boolean = Object.values(paymentErrors).every(err => !err) &&
+                            Object.values(paymentData).every(val => val.trim() !== '');
+
+  const handleSubmit = (): void => {
     if (!isFormValid) return;
 
-    // Clear form
     setFormData({ name: '', email: '', phone: '', message: '' });
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
 
+  const showFullscreenLoader = (
+    text: string = 'Processing...', 
+    subtext: string = 'Please wait while we process your request', 
+    state: LoaderState = 'loading'
+  ): void => {
+    setLoaderText(text);
+    setLoaderSubtext(subtext);
+    setLoaderState(state);
+    setShowLoader(true);
+  };
+
+  const hideFullscreenLoader = (): void => {
+    setShowLoader(false);
+  };
+
+  const showSuccessLoader = (
+    text: string = 'Success!', 
+    subtext: string = 'Your request has been processed successfully'
+  ): void => {
+    setLoaderState('success');
+    setLoaderText(text);
+    setLoaderSubtext(subtext);
+    setTimeout(hideFullscreenLoader, 2000);
+  };
+
+  const showErrorLoader = (
+    text: string = 'Error Occurred', 
+    subtext: string = 'Something went wrong. Please try again.'
+  ): void => {
+    setLoaderState('error');
+    setLoaderText(text);
+    setLoaderSubtext(subtext);
+    setTimeout(hideFullscreenLoader, 3000);
+  };
+
+  const initializePayment = async (): Promise<void> => {
+    if (!isPaymentFormValid) return;
+
+    try {
+      showFullscreenLoader('Initializing Payment...', 'Setting up your payment details');
+
+      console.log('Initializing payment with:', {
+        customerName: paymentData.customerName,
+        customerEmail: paymentData.customerEmail,
+        customerPhone: paymentData.customerPhone,
+        amount: 999
+      });
+
+      const response = await fetch(`${API_BASE_URL}/api/booking/initialize-booking`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: paymentData.customerName,
+          customerEmail: paymentData.customerEmail,
+          customerPhone: paymentData.customerPhone,
+          amount: 999
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseText = await response.text();
+      let data: InitializeBookingResponse;
+      
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error('Invalid response from server');
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || data.error || 'Failed to initialize booking');
+      }
+
+      setCurrentPaymentId(data.paymentId);
+      hideFullscreenLoader();
+
+      // Initialize Razorpay
+      const options = {
+        key: data.razorpayKeyId,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'NEET Counseling',
+        description: 'Consultation Fee',
+        order_id: data.orderId,
+        prefill: {
+          name: paymentData.customerName,
+          email: paymentData.customerEmail,
+          contact: paymentData.customerPhone
+        },
+        theme: { color: '#8b5cf6' },
+        handler: function (response: RazorpayResponse) {
+          verifyPayment(response);
+        },
+        modal: {
+          ondismiss: function() {
+            handlePaymentFailure('Payment cancelled by user');
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showErrorLoader('Initialization Failed', errorMessage);
+    }
+  };
+
+  const verifyPayment = async (response: RazorpayResponse): Promise<void> => {
+    try {
+      showFullscreenLoader('Verifying Payment...', 'Please wait while we confirm your payment');
+
+      const verificationData = {
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        paymentId: currentPaymentId
+      };
+
+      console.log('Verifying payment with:', verificationData);
+
+      const verifyResponse = await fetch(`${API_BASE_URL}/api/booking/verify-payment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(verificationData),
+      });
+
+      if (!verifyResponse.ok) {
+        throw new Error(`HTTP error! status: ${verifyResponse.status}`);
+      }
+
+      const responseText = await verifyResponse.text();
+      let data: VerifyPaymentResponse;
+      
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error('Invalid response from server');
+      }
+
+      if (data.success === true) {
+        showSuccessLoader('Payment Successful!', 'Redirecting to scheduling...');
+        
+        setTimeout(() => {
+          if (data.schedulingUrl) {
+            setCalendlyUrl(data.schedulingUrl);
+            setShowPaymentModal(false);
+            startCountdown(data.schedulingUrl);
+          }
+        }, 2000);
+      } else {
+        throw new Error(data.message || data.error || 'Payment verification failed');
+      }
+
+    } catch (error) {
+      console.error('Verification error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      showErrorLoader('Payment Verification Failed', errorMessage);
+    }
+  };
+
+  const handlePaymentFailure = async (error: string): Promise<void> => {
+    showErrorLoader('Payment Failed', error);
+    
+    if (currentPaymentId) {
+      try {
+        await fetch(`${API_BASE_URL}/api/booking/payment-failed`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentId: currentPaymentId,
+            error: error
+          }),
+        });
+      } catch (err) {
+        console.error('Error handling payment failure:', err);
+      }
+    }
+  };
+
+  const startCountdown = (url: string): void => {
+    let countdown = 5;
+    const timer = setInterval(() => {
+      countdown--;
+      if (countdown <= 0) {
+        clearInterval(timer);
+        window.open(url, '_blank');
+        setCountdownTimer(null);
+      }
+    }, 1000);
+    setCountdownTimer(timer);
+  };
+
+  const cancelCountdown = (): void => {
+    if (countdownTimer) {
+      clearInterval(countdownTimer);
+      setCountdownTimer(null);
+    }
+  };
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Log API configuration for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Contact Section initialized with API_BASE_URL:', API_BASE_URL);
+    }
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, [API_BASE_URL]);
+
   return (
-    <Section id="contact" ref={ref}>
+    <div className="bg-yellow-50 py-20 px-6">
       {showToast && (
-        <Toast>
-          <CheckCircle size={18} style={{ marginRight: '8px' }} />
+        <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-3 rounded-lg flex items-center shadow-lg z-50">
+          <CheckCircle size={18} className="mr-2" />
           Form submitted successfully!
-        </Toast>
+        </div>
       )}
 
-      <Container>
-        <motion.div initial="hidden" animate={controls} variants={fadeUpVariant}>
-          <Title>
-            Have <Highlight>Questions?</Highlight> Get in Touch
-          </Title>
-        </motion.div>
+      {/* Fullscreen Loader */}
+      {showLoader && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white p-12 rounded-3xl text-center shadow-2xl max-w-md w-11/12">
+            {loaderState === 'loading' && (
+              <div className="w-16 h-16 border-4 border-gray-300 border-t-purple-500 rounded-full animate-spin mx-auto mb-6"></div>
+            )}
+            {loaderState === 'success' && (
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                <CheckCircle size={32} className="text-white" />
+              </div>
+            )}
+            {loaderState === 'error' && (
+              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                <X size={32} className="text-white" />
+              </div>
+            )}
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">{loaderText}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">{loaderSubtext}</p>
+          </div>
+        </div>
+      )}
 
-        <motion.div initial="hidden" animate={controls} variants={fadeUpVariant} transition={{ delay: 0.2 }}>
-          <Subtitle>
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                <CreditCard className="mr-2 text-purple-500" size={24} />
+                Schedule Your Call
+              </h2>
+              <button
+                onClick={() => setShowPaymentModal(false)}
+                className="text-gray-500 hover:text-gray-700 p-1"
+                type="button"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-6">Complete payment to book your consultation slot</p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  name="customerName"
+                  value={paymentData.customerName}
+                  onChange={handlePaymentChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  required
+                />
+                {paymentErrors.customerName && <span className="text-red-500 text-xs">{paymentErrors.customerName}</span>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  name="customerEmail"
+                  value={paymentData.customerEmail}
+                  onChange={handlePaymentChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  required
+                />
+                {paymentErrors.customerEmail && <span className="text-red-500 text-xs">{paymentErrors.customerEmail}</span>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  name="customerPhone"
+                  value={paymentData.customerPhone}
+                  onChange={handlePaymentChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  required
+                />
+                {paymentErrors.customerPhone && <span className="text-red-500 text-xs">{paymentErrors.customerPhone}</span>}
+              </div>
+
+              <div className="bg-gray-50 p-4 rounded-lg text-center">
+                <div className="text-sm text-gray-600">Consultation Fee</div>
+                <div className="text-3xl font-bold text-green-600">₹999</div>
+              </div>
+
+              <button
+                onClick={initializePayment}
+                disabled={!isPaymentFormValid}
+                className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200"
+                type="button"
+              >
+                💳 Pay & Schedule Call
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Calendly Modal */}
+      {calendlyUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={32} className="text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Payment Successful!</h2>
+            <p className="text-gray-600 mb-6">You can now schedule your consultation call.</p>
+            
+            <a
+              href={calendlyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 mb-4"
+            >
+              📅 Schedule Your Call Now
+            </a>
+
+            {countdownTimer && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 mb-2">Opening Calendly automatically in 5 seconds...</p>
+                <button
+                  onClick={cancelCountdown}
+                  className="text-red-500 text-sm hover:text-red-700"
+                  type="button"
+                >
+                  Cancel Auto-Redirect
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={() => setCalendlyUrl('')}
+              className="text-gray-500 hover:text-gray-700"
+              type="button"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-3">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-800 mb-3">
+            Have <span className="text-purple-500">Questions?</span> Get in Touch
+          </h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Our team is ready to answer any questions you might have about our NEET counseling services.
-          </Subtitle>
-        </motion.div>
+          </p>
+        </div>
 
-        <Grid>
-          <motion.div initial="hidden" animate={controls} variants={slideLeftVariant} transition={{ delay: 0.4 }}
-            style={{ flex: 1, minWidth: 350, maxWidth: 540 }}>
-            <FormCard>
-              <FormTitle>Send us a message</FormTitle>
-              <Form onSubmit={handleSubmit}>
-                <Label>Your Name</Label>
-                <Input
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* Contact Form */}
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6">Send us a message</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
-                {errors.name && <ErrorText>{errors.name}</ErrorText>}
+                {errors.name && <span className="text-red-500 text-xs">{errors.name}</span>}
+              </div>
 
-                <Label>Email Address</Label>
-                <Input
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
-                {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+              </div>
 
-                <Label>Phone Number</Label>
-                <Input
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
-                {errors.phone && <ErrorText>{errors.phone}</ErrorText>}
+                {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
+              </div>
 
-                <Label>Your Message</Label>
-                <Textarea
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="How can we help you?"
                   rows={5}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
-                {errors.message && <ErrorText>{errors.message}</ErrorText>}
+                {errors.message && <span className="text-red-500 text-xs">{errors.message}</span>}
+              </div>
 
-                <SubmitButton disabled={!isFormValid}>Submit</SubmitButton>
-              </Form>
-            </FormCard>
-          </motion.div>
+              <button
+                onClick={handleSubmit}
+                disabled={!isFormValid}
+                className="w-full bg-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                type="button"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
 
-          <motion.div initial="hidden" animate={controls} variants={slideRightVariant} transition={{ delay: 0.6 }}
-            style={{ flex: 1, minWidth: 300, maxWidth: 500 }}>
-            <RightColumn>
-              <InfoCard>
-                <FormTitle>Contact Information</FormTitle>
+          {/* Contact Info & Booking */}
+          <div className="space-y-6">
+            {/* Contact Information */}
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <Phone size={20} className="text-purple-500 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-800">Phone</p>
+                    <p className="text-gray-600">+91 9876543210</p>
+                  </div>
+                </div>
 
-                <InfoGroup>
-                  <IconWithLabel><Phone size={20} /><InfoLabel>Phone</InfoLabel></IconWithLabel>
-                  <InfoText>+91 9876543210</InfoText>
-                </InfoGroup>
+                <div className="flex items-start space-x-3">
+                  <Mail size={20} className="text-purple-500 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-800">Email</p>
+                    <p className="text-gray-600">contact@predicto.tier.app</p>
+                  </div>
+                </div>
 
-                <InfoGroup>
-                  <IconWithLabel><Mail size={20} /><InfoLabel>Email</InfoLabel></IconWithLabel>
-                  <InfoText>contact@predicto.tier.app</InfoText>
-                </InfoGroup>
+                <div className="flex items-start space-x-3">
+                  <MapPin size={20} className="text-purple-500 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-800">Office Address</p>
+                    <p className="text-gray-600">
+                      123 Main Street, Bangalore<br />
+                      Karnataka, India - 560001
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                <InfoGroup>
-                  <IconWithLabel><MapPin size={20} /><InfoLabel>Office Address</InfoLabel></IconWithLabel>
-                  <InfoText>
-                    123 Main Street, Bangalore<br />
-                    Karnataka, India - 560001
-                  </InfoText>
-                </InfoGroup>
-              </InfoCard>
-
-              <motion.div initial="hidden" animate={controls} variants={scaleUpVariant} transition={{ delay: 0.8 }}>
-                <CalendlyCard>
-                  <FormTitle>Book a Free Consultation</FormTitle>
-                  <InfoText>
-                    Schedule a free 30-minute consultation with our expert counselors to discuss your NEET journey.
-                  </InfoText>
-                  <CalendlyButton><Calendar size={16} />Book via Calendly</CalendlyButton>
-                </CalendlyCard>
-              </motion.div>
-            </RightColumn>
-          </motion.div>
-        </Grid>
-      </Container>
-    </Section>
+            {/* Book Consultation */}
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Book a Free Consultation</h3>
+              <p className="text-gray-600 mb-6">
+                Schedule a free 30-minute consultation with our expert counselors to discuss your NEET journey.
+              </p>
+              <button
+                onClick={() => setShowPaymentModal(true)}
+                className="w-full bg-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 flex items-center justify-center space-x-2"
+                type="button"
+              >
+                <Calendar size={16} />
+                <span>Book via Calendly</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
-
-// Styled Components
-
-const Toast = styled.div`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #4BB543;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-  z-index: 9999;
-`;
-
-const ErrorText = styled.span`
-  font-size: 12px;
-  color: red;
-  font-family: 'Inter', sans-serif;
-  margin-top: -6px;
-  margin-bottom: 8px;
-`;
-
-
-// Styled Components
-
-const Section = styled.section`
-  background: #FFFDF5;
-  padding: 80px 24px;
-
-  @media (max-width: 768px) {
-    padding: 60px 16px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 40px 12px;
-  }
-`;
-
-const Container = styled.div`
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 0 12px;
-
-  @media (max-width: 480px) {
-    padding: 0 8px;
-  }
-`;
-
-const Title = styled.h2`
-  font-size: 36px;
-  font-weight: 700;
-  font-family: "Poppins", sans-serif;
-  text-align: center;
-  margin-bottom: 12px;
-  color: #1f1f1f;
-
-  @media (max-width: 768px) {
-    font-size: 28px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 24px;
-  }
-`;
-
-const Highlight = styled.span`
-  color: #8b5cf6;
-`;
-
-const Subtitle = styled.p`
-  text-align: center;
-  font-size: 18px;
-  font-weight: 400;
-  font-family: "Inter", sans-serif;
-  color: #4B5563;
-  max-width: 720px;
-  margin: 0 auto 48px;
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-    max-width: 90%;
-    margin-bottom: 40px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-    margin-bottom: 32px;
-  }
-`;
-
-const Grid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
-  justify-content: center;
-  align-items: stretch;
-
-  @media (max-width: 1024px) {
-    gap: 24px;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const FormCard = styled.div`
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  padding: 32px;
-  flex: 1;
-  min-width: 350px;
-  max-width: 540px;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 480px) {
-    padding: 24px 20px;
-    min-width: 100%;
-    max-width: 100%;
-  }
-`;
-
-const RightColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
-  min-width: 300px;
-  max-width: 500px;
-  justify-content: space-between;
-
-  @media (max-width: 480px) {
-    min-width: 100%;
-    max-width: 100%;
-  }
-`;
-
-const InfoCard = styled.div`
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  padding: 32px;
-
-  @media (max-width: 480px) {
-    padding: 24px 20px;
-  }
-`;
-
-const InfoGroup = styled.div`
-  margin-bottom: 20px;
-`;
-
-const InfoLabel = styled.label`
-  font-size: 16px;
-  font-weight: 500;
-  color: #020817;
-  font-family: 'Inter', sans-serif;
-  margin-bottom: 4px;
-  display: inline-block;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
-`;
-
-const IconWithLabel = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-
-  svg {
-    color: #9B87F5;
-    flex-shrink: 0;
-  }
-`;
-
-const CalendlyCard = styled(InfoCard)``;
-
-const FormTitle = styled.h3`
-  font-size: 24px;
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  color: #020817;
-  margin-bottom: 24px;
-
-  @media (max-width: 480px) {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`;
-
-const Label = styled.label`
-  display: block;
-  font-size: 14px;
-  font-family: 'Inter', sans-serif;
-  color: #374151;
-  font-weight: 500;
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  color: #000 !important;        
-  background-color: #fff;         
-  font-size: 14px;
-  font-family: 'Inter', sans-serif;
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 9px 12px;
-  }
-`;
-
-const Textarea = styled.textarea`
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #000 !important;        
-  background-color: #fff;         
-  font-family: 'Inter', sans-serif;
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 9px 12px;
-  }
-`;
-
-const SubmitButton = styled.button`
-  width: 100%;
-  margin-top: 24px;
-  padding: 12px;
-  background: #a78bfa;
-  color: white;
-  font-weight: 500;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-
-  &:hover {
-    background: #8b5cf6;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-    font-size: 13px;
-    margin-top: 20px;
-  }
-`;
-
-const InfoText = styled.p`
-  font-size: 16px;
-  font-weight: 400;
-  color: #374151;
-  line-height: 1.5;
-  font-family: 'Inter', sans-serif;
-
-  @media (max-width: 480px) {
-    font-size: 14px;
-  }
-`;
-
-const CalendlyButton = styled.button`
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  background: #a78bfa;
-  color: white;
-  font-weight: 500;
-  font-size: 14px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-
-  &:hover {
-    background: #8b5cf6;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 10px;
-  }
-`;
