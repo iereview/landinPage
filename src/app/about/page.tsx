@@ -4,68 +4,8 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-const AboutSection = () => {
-  return (
-    <Section id="about">
-      <Container>
-        <MotionImageContainer
-          initial={{ opacity: 0, x: -60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          viewport={{ once: true }}
-        >
-          <ImagePlaceholder />
-          <MotionBadge
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h4>1000+</h4>
-            <p>Students Counseled</p>
-          </MotionBadge>
-        </MotionImageContainer>
-
-        <MotionTextContent
-          initial={{ opacity: 0, x: 60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          viewport={{ once: true }}
-        >
-          <Title>What is Predicto?</Title>
-          <Description>
-            Predicto is a specialized NEET counseling assistance service designed to guide students and parents through the complexities of the NEET admission process and college selection. Our mission is simple: to empower you with the knowledge, tools, and personalized support you need to make informed decisions about your MBBS journey.
-          </Description>
-          <SubTitle>Why Choose Predicto?</SubTitle>
-          <List>
-            <li>Expert counselors with years of experience in NEET guidance</li>
-            <li>Personalized approach tailored to your specific needs and goals</li>
-            <li>Comprehensive support throughout the entire NEET journey</li>
-            <li>Direct access to Giri Sripathi and TIER's expert team</li>
-            <li>Proven track record of successful student placements</li>
-          </List>
-           <Link href="#services" passHref>
-          <MotionButton
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Learn More About Our Services
-          </MotionButton>
-          </Link>
-        </MotionTextContent>
-      </Container>
-    </Section>
-  );
-};
-
-export default AboutSection;
-
-
-
 // Styled Components
-// Updated Styled Components for responsiveness and left-aligned text
-
-export const Section = styled.section`
+const Section = styled.section`
   padding: 64px 150px;
   background: #fff;
 
@@ -78,7 +18,7 @@ export const Section = styled.section`
   }
 `;
 
-export const Container = styled.div`
+const Container = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -91,8 +31,7 @@ export const Container = styled.div`
   }
 `;
 
-
-export const MotionImageContainer = styled(motion.div)`
+const MotionImageContainer = styled(motion.div)`
   position: relative;
   width: 660px;
   height: 600px;
@@ -110,8 +49,7 @@ export const MotionImageContainer = styled(motion.div)`
   }
 `;
 
-
-export const ImagePlaceholder = styled.div`
+const ImagePlaceholder = styled.div`
   width: 100%;
   height: 100%;
   background-image: url('/placeholder.svg');
@@ -120,7 +58,7 @@ export const ImagePlaceholder = styled.div`
   border-radius: 16px;
 `;
 
-export const MotionBadge = styled(motion.div)`
+const MotionBadge = styled(motion.div)`
   position: absolute;
   bottom: -25px;
   right: 35px;
@@ -153,17 +91,17 @@ export const MotionBadge = styled(motion.div)`
   }
 `;
 
-export const MotionTextContent = styled(motion.div)`
+const MotionTextContent = styled(motion.div)`
   margin-top: 20px;
   max-width: 600px;
-  text-align: left; /* Ensure left alignment */
+  text-align: left;
 
   @media (max-width: 768px) {
     max-width: 100%;
   }
 `;
 
-export const Title = styled.h2`
+const Title = styled.h2`
   font-size: 32px;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
@@ -179,7 +117,7 @@ export const Title = styled.h2`
   }
 `;
 
-export const Description = styled.p`
+const Description = styled.p`
   font-size: 18px;
   font-family: 'Inter', sans-serif;
   margin-bottom: 2rem;
@@ -194,7 +132,7 @@ export const Description = styled.p`
   }
 `;
 
-export const SubTitle = styled.h3`
+const SubTitle = styled.h3`
   font-size: 20px;
   font-family: 'Poppins', sans-serif;
   color: #000;
@@ -210,7 +148,7 @@ export const SubTitle = styled.h3`
   }
 `;
 
-export const List = styled.ul`
+const List = styled.ul`
   list-style: none;
   padding-left: 0;
   margin-bottom: 2rem;
@@ -252,29 +190,80 @@ export const List = styled.ul`
   }
 `;
 
-export const MotionButton = styled(motion.button)`
-  background-color: #9b87f5;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;  /* Increased for desktop */
-  font-weight: 400;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+const MotionButton = styled(motion.button)`
+  background: #7e69ab;
+  color: white;
   border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.2s;
 
   &:hover {
-    background-color: #684cc0;
+    background: #6a5a8f;
   }
 
   @media (max-width: 768px) {
     font-size: 14px;
-    padding: 0.65rem 1.2rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-    padding: 0.55rem 1rem;
+    padding: 10px 20px;
   }
 `;
+
+export default function AboutPage() {
+  return (
+    <Section id="about">
+      <Container>
+        <MotionImageContainer
+          initial={{ opacity: 0, x: -60 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true }}
+        >
+          <ImagePlaceholder />
+          <MotionBadge
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h4>1000+</h4>
+            <p>Students Counseled</p>
+          </MotionBadge>
+        </MotionImageContainer>
+
+        <MotionTextContent
+          initial={{ opacity: 0, x: 60 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true }}
+        >
+          <Title>What is Predicto?</Title>
+          <Description>
+            Predicto is a specialized NEET counseling assistance service designed to guide students and parents through the complexities of the NEET admission process and college selection. Our mission is simple: to empower you with the knowledge, tools, and personalized support you need to make informed decisions about your MBBS journey.
+          </Description>
+          <SubTitle>Why Choose Predicto?</SubTitle>
+          <List>
+            <li>Expert counselors with years of experience in NEET guidance</li>
+            <li>Personalized approach tailored to your specific needs and goals</li>
+            <li>Comprehensive support throughout the entire NEET journey</li>
+            <li>Direct access to Giri Sripathi and TIER's expert team</li>
+            <li>Proven track record of successful student placements</li>
+          </List>
+          <Link href="#services" legacyBehavior>
+            <a>
+              <MotionButton
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Learn More About Our Services
+              </MotionButton>
+            </a>
+          </Link>
+        </MotionTextContent>
+      </Container>
+    </Section>
+  );
+}

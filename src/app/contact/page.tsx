@@ -64,13 +64,9 @@ declare global {
   }
 }
 
-export default function ContactSection(): JSX.Element {
+export default function ContactSection() {
   // API Configuration
-  // Note: Make sure your backend server at localhost:3000 has CORS enabled
-  // to allow requests from your React app domain
-  const API_BASE_URL: string = process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:3001' 
-    : ''; // Use relative URLs in production
+  const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://16.16.217.38';
   
   const [showToast, setShowToast] = useState<boolean>(false);
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
@@ -211,7 +207,7 @@ export default function ContactSection(): JSX.Element {
         amount: 999
       });
 
-      const response = await fetch(`${API_BASE_URL}/api/booking/initialize-booking`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/initialize-booking`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -239,7 +235,10 @@ export default function ContactSection(): JSX.Element {
         throw new Error(data.message || data.error || 'Failed to initialize booking');
       }
 
+      // Set payment ID before opening Razorpay
       setCurrentPaymentId(data.paymentId);
+      console.log('Payment ID set:', data.paymentId);
+
       hideFullscreenLoader();
 
       // Initialize Razorpay
@@ -257,6 +256,11 @@ export default function ContactSection(): JSX.Element {
         },
         theme: { color: '#8b5cf6' },
         handler: function (response: RazorpayResponse) {
+          if (!currentPaymentId) {
+            console.error('Payment ID is missing');
+            showErrorLoader('Payment Error', 'Payment ID is missing. Please try again.');
+            return;
+          }
           verifyPayment(response);
         },
         modal: {
@@ -278,6 +282,10 @@ export default function ContactSection(): JSX.Element {
 
   const verifyPayment = async (response: RazorpayResponse): Promise<void> => {
     try {
+      if (!currentPaymentId) {
+        throw new Error('Payment ID is missing');
+      }
+
       showFullscreenLoader('Verifying Payment...', 'Please wait while we confirm your payment');
 
       const verificationData = {
@@ -289,7 +297,7 @@ export default function ContactSection(): JSX.Element {
 
       console.log('Verifying payment with:', verificationData);
 
-      const verifyResponse = await fetch(`${API_BASE_URL}/api/booking/verify-payment`, {
+      const verifyResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/verify-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(verificationData),
@@ -334,7 +342,7 @@ export default function ContactSection(): JSX.Element {
     
     if (currentPaymentId) {
       try {
-        await fetch(`${API_BASE_URL}/api/booking/payment-failed`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/payment-failed`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -373,6 +381,12 @@ export default function ContactSection(): JSX.Element {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    script.onload = () => {
+      console.log('Razorpay script loaded successfully');
+    };
+    script.onerror = (error) => {
+      console.error('Error loading Razorpay script:', error);
+    };
     document.body.appendChild(script);
 
     // Log API configuration for debugging
@@ -385,10 +399,10 @@ export default function ContactSection(): JSX.Element {
         document.body.removeChild(script);
       }
     };
-  }, [API_BASE_URL]);
+  }, []);
 
   return (
-    <div className="bg-yellow-50 py-20 px-6">
+    <div id="contact" className="bg-yellow-50 py-20 px-6">
       {showToast && (
         <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-3 rounded-lg flex items-center shadow-lg z-50">
           <CheckCircle size={18} className="mr-2" />
@@ -447,7 +461,7 @@ export default function ContactSection(): JSX.Element {
                   name="customerName"
                   value={paymentData.customerName}
                   onChange={handlePaymentChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                   required
                 />
                 {paymentErrors.customerName && <span className="text-red-500 text-xs">{paymentErrors.customerName}</span>}
@@ -460,7 +474,7 @@ export default function ContactSection(): JSX.Element {
                   name="customerEmail"
                   value={paymentData.customerEmail}
                   onChange={handlePaymentChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                   required
                 />
                 {paymentErrors.customerEmail && <span className="text-red-500 text-xs">{paymentErrors.customerEmail}</span>}
@@ -473,7 +487,7 @@ export default function ContactSection(): JSX.Element {
                   name="customerPhone"
                   value={paymentData.customerPhone}
                   onChange={handlePaymentChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                   required
                 />
                 {paymentErrors.customerPhone && <span className="text-red-500 text-xs">{paymentErrors.customerPhone}</span>}
@@ -563,7 +577,7 @@ export default function ContactSection(): JSX.Element {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                 />
                 {errors.name && <span className="text-red-500 text-xs">{errors.name}</span>}
               </div>
@@ -576,7 +590,7 @@ export default function ContactSection(): JSX.Element {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                 />
                 {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
               </div>
@@ -589,7 +603,7 @@ export default function ContactSection(): JSX.Element {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                 />
                 {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
               </div>
@@ -602,7 +616,7 @@ export default function ContactSection(): JSX.Element {
                   onChange={handleChange}
                   placeholder="How can we help you?"
                   rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                 />
                 {errors.message && <span className="text-red-500 text-xs">{errors.message}</span>}
               </div>
