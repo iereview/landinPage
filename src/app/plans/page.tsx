@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const plans = [
   {
@@ -75,32 +75,9 @@ const cardVariants = {
   }),
 };
 
-// Keyframes for tick animation
-const draw = keyframes`
-  0% {
-    stroke-dashoffset: 100;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-`;
-
-// Keyframes for cross animation
-const crossDraw = keyframes`
-  0% {
-    stroke-dashoffset: 150;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-`;
-
 export default function PlansSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const middleCardRef = useRef<HTMLDivElement>(null);
-  const [selectedPlan, setSelectedPlan] = useState<any>(null);
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<null | "success" | "failure">(null);
 
   useEffect(() => {
     if (scrollRef.current && middleCardRef.current) {
@@ -115,30 +92,6 @@ export default function PlansSection() {
       scrollContainer.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
   }, []);
-
-  const handlePlanSelect = (plan: any) => {
-    setSelectedPlan(plan);
-    setIsPaymentOpen(true);
-  };
-
-  const handlePaymentSuccess = () => {
-    setIsPaymentOpen(false);
-    setPaymentStatus("success");
-  };
-
-  const handlePaymentFailure = () => {
-    setIsPaymentOpen(false);
-    setPaymentStatus("failure");
-  };
-
-  const handlePaymentCancel = () => {
-    setIsPaymentOpen(false);
-  };
-
-  const closeStatusModal = () => {
-    setPaymentStatus(null);
-    setSelectedPlan(null);
-  };
 
   return (
     <Wrapper id="plans">
@@ -190,12 +143,7 @@ export default function PlansSection() {
                 ))}
               </FeatureList>
             </CardContent>
-            <Button
-              $highlight={plan.highlight}
-              onClick={() => handlePlanSelect(plan)}
-            >
-              {plan.buttonText}
-            </Button>
+            <Button $highlight={plan.highlight}>{plan.buttonText}</Button>
           </Card>
         ))}
       </CardsWrapper>
@@ -206,261 +154,9 @@ export default function PlansSection() {
         </Link>{" "}
         for personalized options.
       </Note>
-
-      {/* Payment confirmation modal */}
-      {isPaymentOpen && selectedPlan && (
-        <Overlay
-          as={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <Modal
-            as={motion.div}
-            initial={{ scale: 0.9, y: 40, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.9, y: 40, opacity: 0 }}
-          >
-            <ModalHeader>
-              <h3>{selectedPlan.title} Plan</h3>
-              <CloseButton onClick={handlePaymentCancel}>×</CloseButton>
-            </ModalHeader>
-            <ModalBody>
-              <p>
-                You're about to confirm your selection of the <strong>{selectedPlan.title}</strong> plan for{" "}
-                <strong>{selectedPlan.price}</strong>.
-              </p>
-            </ModalBody>
-            <ModalFooter>
-              <PrimaryButton onClick={handlePaymentSuccess}>Confirm & Pay</PrimaryButton>
-              <SecondaryButton onClick={handlePaymentCancel}>Cancel</SecondaryButton>
-            </ModalFooter>
-          </Modal>
-        </Overlay>
-      )}
-
-      {/* Payment status modal (success or failure) */}
-      {paymentStatus && (
-        <Overlay
-          as={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <Modal
-            as={motion.div}
-            initial={{ scale: 0.9, y: 40, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.9, y: 40, opacity: 0 }}
-          >
-            <ModalHeader
-              style={{
-                background: paymentStatus === "success" ? "#34d399" : "#f87171",
-              }}
-            >
-              <h3>{paymentStatus === "success" ? "Payment Successful" : "Payment Failed"}</h3>
-              <CloseButton onClick={closeStatusModal}>×</CloseButton>
-            </ModalHeader>
-            <ModalBody style={{ textAlign: "center" }}>
-              {paymentStatus === "success" ? (
-                <>
-                  <SuccessIcon
-                    viewBox="0 0 52 52"
-                    aria-label="Success checkmark"
-                    role="img"
-                  >
-                    <circle
-                      cx="26"
-                      cy="26"
-                      r="25"
-                      fill="none"
-                      stroke="#34d399"
-                      strokeWidth="2"
-                    />
-                    <motion.path
-                      fill="none"
-                      stroke="#34d399"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M14 27l7 7 16-16"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.7, ease: "easeInOut" }}
-                    />
-                  </SuccessIcon>
-                  <p>Thank you for your payment. Your plan is now active.</p>
-                </>
-              ) : (
-                <>
-                  <FailureIcon
-                    viewBox="0 0 52 52"
-                    aria-label="Failure cross"
-                    role="img"
-                  >
-                    <circle
-                      cx="26"
-                      cy="26"
-                      r="25"
-                      fill="none"
-                      stroke="#f87171"
-                      strokeWidth="2"
-                    />
-                    <motion.line
-                      x1="16"
-                      y1="16"
-                      x2="36"
-                      y2="36"
-                      stroke="#f87171"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
-                    />
-                    <motion.line
-                      x1="36"
-                      y1="16"
-                      x2="16"
-                      y2="36"
-                      stroke="#f87171"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.5, ease: "easeInOut", delay: 0.3 }}
-                    />
-                  </FailureIcon>
-                  <p>
-                    Sorry, your payment could not be processed. Please try again.
-                  </p>
-                </>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <PrimaryButton onClick={closeStatusModal}>Close</PrimaryButton>
-            </ModalFooter>
-          </Modal>
-        </Overlay>
-      )}
     </Wrapper>
   );
 }
-
-
-// Animated success icon
-const SuccessIcon = styled.svg`
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 20px;
-  display: block;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  animation: ${draw} 0.7s forwards;
-`;
-
-
-const FailureIcon = styled.svg`
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 20px;
-  display: block;
-  stroke-dasharray: 150;
-  stroke-dashoffset: 150;
-  animation: ${crossDraw} 0.5s forwards;
-`;
-
-
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-`;
-
-const Modal = styled.div`
-  background: #ffffff;
-  width: 90%;
-  max-width: 420px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
-`;
-
-const ModalHeader = styled.div`
-  background: linear-gradient(90deg, #9b87f5, #7e69ab);
-  color: white;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h3 {
-    font-size: 20px;
-    margin: 0;
-  }
-`;
-
-const CloseButton = styled.button`
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: white;
-  cursor: pointer;
-`;
-
-const ModalBody = styled.div`
-  padding: 24px;
-  font-size: 16px;
-  color: #374151;
-
-  p {
-    margin: 0;
-  }
-`;
-
-const ModalFooter = styled.div`
-  padding: 16px 24px;
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  background-color: #f9fafb;
-`;
-
-const PrimaryButton = styled.button`
-  background: #7e69ab;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-
-  &:hover {
-    background: #6a57a5;
-  }
-`;
-
-const SecondaryButton = styled.button`
-  background: #e5e7eb;
-  color: #374151;
-  border: none;
-  padding: 10px 20px;
-  font-weight: 500;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-
-  &:hover {
-    background: #d1d5db;
-  }
-`;
-
 
 // Styled components remain unchanged
 const Wrapper = styled.section`

@@ -91,7 +91,7 @@ const HowItWorks = () => {
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}
           >
-            <Image src="/icons/calendar.png" alt="Calendar Icon" width={20} height={20} />
+            <Image src="/icons/Calendar.png" alt="Calendar Icon" width={20} height={20} />
             <span>Get Started</span>
           </CTAButton>
         </Link>

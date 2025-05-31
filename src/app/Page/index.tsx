@@ -30,7 +30,7 @@ export default function Home() {
             <Link href="#contact" passHref>
               <PrimaryBtn whileHover={{ scale: 1.05 }}>
                 <Image
-                  src="/icons/calendar.png"
+                  src="/icons/Calendar.png"
                   alt="Calendar Icon"
                   width={16}
                   height={16}
