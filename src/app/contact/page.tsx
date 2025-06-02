@@ -151,12 +151,44 @@ export default function ContactSection() {
   const isPaymentFormValid: boolean = Object.values(paymentErrors).every(err => !err) &&
                             Object.values(paymentData).every(val => val.trim() !== '');
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     if (!isFormValid) return;
 
-    setFormData({ name: '', email: '', phone: '', message: '' });
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    try {
+      showFullscreenLoader('Submitting Form...', 'Please wait while we process your request');
+
+      const response = await fetch(`${API_BASE_URL}/api/submit-form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          phoneNumber: formData.phone,
+          email: formData.email,
+          city: 'Not Specified', // You might want to add a city field to your form
+          subject: formData.message
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.message === 'Form submitted successfully') {
+        showSuccessLoader('Form Submitted!', 'Thank you for contacting us. We will get back to you soon.');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } else {
+        throw new Error('Failed to submit form');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit form';
+      showErrorLoader('Submission Failed', errorMessage);
+    }
   };
 
   const showFullscreenLoader = (
