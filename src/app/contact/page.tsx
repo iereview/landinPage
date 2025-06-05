@@ -151,12 +151,44 @@ export default function ContactSection() {
   const isPaymentFormValid: boolean = Object.values(paymentErrors).every(err => !err) &&
                             Object.values(paymentData).every(val => val.trim() !== '');
 
-  const handleSubmit = (): void => {
+  const handleSubmit = async (): Promise<void> => {
     if (!isFormValid) return;
 
-    setFormData({ name: '', email: '', phone: '', message: '' });
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    try {
+      showFullscreenLoader('Submitting Form...', 'Please wait while we process your request');
+
+      const response = await fetch(`${API_BASE_URL}/api/submit-form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          phoneNumber: formData.phone,
+          email: formData.email,
+          city: 'Not Specified', // You might want to add a city field to your form
+          subject: formData.message
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.message === 'Form submitted successfully') {
+        showSuccessLoader('Form Submitted!', 'Thank you for contacting us. We will get back to you soon.');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } else {
+        throw new Error('Failed to submit form');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit form';
+      showErrorLoader('Submission Failed', errorMessage);
+    }
   };
 
   const showFullscreenLoader = (
@@ -200,12 +232,7 @@ export default function ContactSection() {
     try {
       showFullscreenLoader('Initializing Payment...', 'Setting up your payment details');
 
-      console.log('Initializing payment with:', {
-        customerName: paymentData.customerName,
-        customerEmail: paymentData.customerEmail,
-        customerPhone: paymentData.customerPhone,
-        amount: 999
-      });
+    
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/initialize-booking`, {
         method: 'POST',
@@ -235,9 +262,10 @@ export default function ContactSection() {
         throw new Error(data.message || data.error || 'Failed to initialize booking');
       }
 
-      // Set payment ID before opening Razorpay
-      setCurrentPaymentId(data.paymentId);
-      console.log('Payment ID set:', data.paymentId);
+      // Store payment ID in a closure to ensure it's available during verification
+      const paymentId = data.paymentId;
+      setCurrentPaymentId(paymentId);
+     
 
       hideFullscreenLoader();
 
@@ -256,12 +284,13 @@ export default function ContactSection() {
         },
         theme: { color: '#8b5cf6' },
         handler: function (response: RazorpayResponse) {
-          if (!currentPaymentId) {
-            console.error('Payment ID is missing');
+          // Use the closure variable instead of currentPaymentId state
+          if (!paymentId) {
+          
             showErrorLoader('Payment Error', 'Payment ID is missing. Please try again.');
             return;
           }
-          verifyPayment(response);
+          verifyPayment(response, paymentId);
         },
         modal: {
           ondismiss: function() {
@@ -274,15 +303,15 @@ export default function ContactSection() {
       rzp.open();
 
     } catch (error) {
-      console.error('Error:', error);
+     
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       showErrorLoader('Initialization Failed', errorMessage);
     }
   };
 
-  const verifyPayment = async (response: RazorpayResponse): Promise<void> => {
+  const verifyPayment = async (response: RazorpayResponse, paymentId: string): Promise<void> => {
     try {
-      if (!currentPaymentId) {
+      if (!paymentId) {
         throw new Error('Payment ID is missing');
       }
 
@@ -292,11 +321,10 @@ export default function ContactSection() {
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature,
-        paymentId: currentPaymentId
+        paymentId: paymentId
       };
 
-      console.log('Verifying payment with:', verificationData);
-
+    
       const verifyResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/booking/verify-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -331,7 +359,7 @@ export default function ContactSection() {
       }
 
     } catch (error) {
-      console.error('Verification error:', error);
+     
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       showErrorLoader('Payment Verification Failed', errorMessage);
     }
@@ -351,7 +379,7 @@ export default function ContactSection() {
           }),
         });
       } catch (err) {
-        console.error('Error handling payment failure:', err);
+       
       }
     }
   };
@@ -382,16 +410,16 @@ export default function ContactSection() {
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     script.onload = () => {
-      console.log('Razorpay script loaded successfully');
+     
     };
     script.onerror = (error) => {
-      console.error('Error loading Razorpay script:', error);
+     
     };
     document.body.appendChild(script);
 
     // Log API configuration for debugging
     if (process.env.NODE_ENV === 'development') {
-      console.log('Contact Section initialized with API_BASE_URL:', API_BASE_URL);
+     
     }
 
     return () => {
