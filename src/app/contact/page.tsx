@@ -241,7 +241,7 @@ export default function ContactSection() {
           customerName: paymentData.customerName,
           customerEmail: paymentData.customerEmail,
           customerPhone: paymentData.customerPhone,
-          amount: 999
+          amount: 10000
         }),
       });
 
@@ -523,7 +523,7 @@ export default function ContactSection() {
 
               <div className="bg-gray-50 p-4 rounded-lg text-center">
                 <div className="text-sm text-gray-600">Consultation Fee</div>
-                <div className="text-3xl font-bold text-green-600">₹999</div>
+                <div className="text-3xl font-bold text-green-600">₹10000</div>
               </div>
 
               <button
