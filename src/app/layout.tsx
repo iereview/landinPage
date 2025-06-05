@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Predicto",
-  icons: "favicon.png",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon.png",
+  },
   description: "#1 NEET Counseling Service",
 };
 
