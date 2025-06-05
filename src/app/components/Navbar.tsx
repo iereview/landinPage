@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-// Animations
 const fadeSlideDown = keyframes`
   0% { opacity: 0; transform: translateY(-20px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -52,7 +51,7 @@ export default Navbar;
 
 const Nav = styled.nav`
   width: 100%;
-  padding: 1.2rem 150px;
+  padding: 1.2rem 6%;
   background-color: #ffffff;
   font-family: 'Inter', sans-serif;
   position: fixed;
@@ -61,10 +60,6 @@ const Nav = styled.nav`
   z-index: 999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   animation: ${fadeSlideDown} 0.6s ease forwards;
-
-  @media (max-width: 1024px) {
-    padding: 1rem 2rem;
-  }
 `;
 
 const NavContainer = styled.div`
@@ -79,6 +74,20 @@ const NavContainer = styled.div`
 const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    width: 174px; // default desktop width
+
+    @media (max-width: 1024px) {
+      width: 140px;  // tablet width
+    }
+
+    @media (max-width: 480px) {
+      width: 110px;  // mobile width
+    }
+  }
 `;
 
 const Hamburger = styled.div<{ $menuOpen: boolean }>`
@@ -86,7 +95,7 @@ const Hamburger = styled.div<{ $menuOpen: boolean }>`
   flex-direction: column;
   cursor: pointer;
   gap: 6px;
-  z-index: 1000;
+  z-index: 1001;
 
   span {
     height: 3px;
@@ -118,17 +127,30 @@ const Hamburger = styled.div<{ $menuOpen: boolean }>`
 const RightSection = styled.div<{ $menuOpen: boolean }>`
   @media (max-width: 1024px) {
     position: absolute;
-    top: 200%;
+    top: 180%;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border-radius: 16px; 
-    animation: ${dropdownReveal} 0.3s ease;
-    max-height: ${({ $menuOpen }) => ($menuOpen ? "1000px" : "0")};
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 0 0 16px 16px;
     overflow: hidden;
+    animation: ${dropdownReveal} 0.3s ease;
+    max-height: ${({ $menuOpen }) => ($menuOpen ? "600px" : "0")};
     transition: max-height 0.4s ease;
+  }
+`;
+
+const NavMenu = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem 2rem;
+    gap: 1rem;
   }
 `;
 
@@ -136,6 +158,7 @@ const NavItem = styled(Link)`
   text-decoration: none;
   color: #1f1f1f;
   font-weight: 500;
+  font-size: 1rem;
   transition: color 0.3s ease;
 
   &:hover {
@@ -143,25 +166,12 @@ const NavItem = styled(Link)`
   }
 `;
 
-const NavMenu = styled.div`
-  display: flex;
-  gap: 2rem;
-  align-items: center;  
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.5rem 2rem;
-    align-items: flex-start;
-  }
-`;
-
 const BookSession = styled(Link)`
   display: flex;
-  align-items: center;        
+  align-items: center;
   justify-content: center;
-  padding: 0.7rem 1.4rem;
-  background-color: #9b87f5;
+  padding: 0.65rem 1.3rem;
+  background-color: #803F98;
   color: white;
   border-radius: 8px;
   font-weight: 500;

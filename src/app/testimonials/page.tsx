@@ -9,28 +9,32 @@ const testimonials = [
     subtext: "NEET 2023, Scored 650+",
     message:
       "Thanks to Predicto and the guidance from Giri sir, I got admission to my dream college. Their personalized approach helped me navigate the complex NEET counseling process with confidence.",
+    image: "/icons/Prisha.png",
   },
   {
-    name: "Arjun Desai",
+    name: "Anya Desai",
     subtext: "NEET 2023, Secured admission in top medical college",
     message:
       "The counselors at Predicto helped me understand my options based on my NEET score. Their insights were invaluable in making the right college choice for my future.",
+    image: "/icons/Anya.png",
   },
   {
     name: "Sneha Reddy",
     subtext: "NEET 2022, Now studying at prestigious medical institute",
     message:
       "I was confused about which college to choose, but Predicto's counselors provided detailed insights about different medical colleges, helping me make an informed decision.",
+    image: "/icons/Sneha.png",
   },
   {
     name: "Rahul Sharma",
     subtext: "Parent of NEET 2023 student",
     message:
       "As parents, we were overwhelmed with the NEET process, but Giri and his team guided us step by step. Their expertise made the journey smooth for our child.",
+    image: "/icons/Rahul.png",
   },
 ];
 
-// Animation variants for heading and subheading
+// Animation variants
 const textVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -40,7 +44,6 @@ const textVariants = {
   },
 };
 
-// Animation variants for each card
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.8, rotateY: -10 },
   visible: (i: number) => ({
@@ -51,7 +54,7 @@ const cardVariants = {
       type: "spring",
       stiffness: 120,
       damping: 20,
-      delay: i * 0.15, // stagger animation by index
+      delay: i * 0.15,
     },
   }),
 };
@@ -68,6 +71,7 @@ const Testimonials = () => {
       >
         Student <Highlight>Success Stories</Highlight>
       </Heading>
+
       <Subheading
         as={motion.p}
         variants={textVariants}
@@ -86,17 +90,14 @@ const Testimonials = () => {
         viewport={{ once: true, amount: 0.3 }}
       >
         {testimonials.map((t, i) => (
-          <Card
-            as={motion.div}
-            key={i}
-            custom={i}
-            variants={cardVariants}
-          >
+          <Card as={motion.div} key={i} custom={i} variants={cardVariants}>
             <Stars>★★★★★</Stars>
             <Message>"{t.message}"</Message>
             <Divider />
             <Profile>
-              <Avatar src="/icons/avatar-placeholder.png" alt={t.name} />
+              <Avatar src={t.image} alt={t.name} onError={(e) => {
+                e.currentTarget.src = "/icons/avatar-placeholder.png";
+              }} />
               <div>
                 <Name>{t.name}</Name>
                 <Subtext>{t.subtext}</Subtext>
@@ -111,8 +112,7 @@ const Testimonials = () => {
 
 export default Testimonials;
 
-// Styled components 
-
+// Styled Components
 const Section = styled.section`
   background: #f9f9fc;
   text-align: center;
@@ -131,16 +131,13 @@ const Heading = styled.h2`
   font-size: 36px;
   font-weight: 700;
   font-family: "Poppins", sans-serif;
-  text-align: center;
-  margin-bottom: 12px;
   color: #1f1f1f;
+  margin-bottom: 12px;
 
   span {
     background: linear-gradient(90deg, #9B87F5, #7E69AB);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
   }
 
   @media (max-width: 768px) {
@@ -157,17 +154,15 @@ const Highlight = styled.span`
 `;
 
 const Subheading = styled.p`
-  text-align: center;
   font-size: 18px;
   font-weight: 400;
   font-family: "Inter", sans-serif;
-  color: #4B5563;
+  color: #4b5563;
   max-width: 720px;
   margin: 0 auto 48px;
 
   @media (max-width: 768px) {
     font-size: 16px;
-    max-width: 90%;
     margin-bottom: 40px;
   }
 
@@ -202,7 +197,6 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  cursor: default;
   will-change: transform;
 
   @media (max-width: 768px) {

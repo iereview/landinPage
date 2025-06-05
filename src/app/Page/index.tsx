@@ -55,7 +55,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <Image
-            src="/"
+            src="/HeroImg.png"
             alt="Hero Illustration"
             width={500}
             height={300}
@@ -79,22 +79,22 @@ const HeroSection = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 120px 150px 64px 150px;
+  padding: 150px 150px 64px 150px;
   background-color: #fff;
   gap: 32px;
 
   @media (max-width: 1200px) {
-    padding: 100px 80px 48px 80px;
+    padding: 120px 80px 48px 80px;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    padding: 100px 40px 0px 40px;
+    padding: 120px 40px 0px 40px;
     gap: 24px;
   }
 
   @media (max-width: 480px) {
-    padding: 100px 20px 0px 20px;
+    padding: 120px 20px 0px 20px;
     gap: 16px;
   }
 `;
@@ -200,7 +200,7 @@ const Description = styled.p`
 `;
 
 const PrimaryBtn = styled(motion.button)`
-  background: #9b87f5;
+  background: #803F98;
   color: white;
   border: none;
   padding: 12px 20px;
@@ -234,8 +234,8 @@ const PrimaryBtn = styled(motion.button)`
 
 const SecondaryBtn = styled(motion.button)`
   background: transparent;
-  border: 1px solid #9b87f5;
-  color: #7e69ab;
+  border: 1px solid #803F98;
+  color: #803F98;
   padding: 12px 20px;
   border-radius: 8px;
   font-weight: 500;
@@ -260,7 +260,7 @@ const SecondaryBtn = styled(motion.button)`
   }
 
   &:hover {
-    color: #6a5acd;
+    color: #803F98;
     box-shadow: 0 4px 12px rgba(159, 122, 234, 0.6);
     border-color: #7c5dc7;
   }

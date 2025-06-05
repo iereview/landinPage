@@ -5,32 +5,32 @@ import { motion } from "framer-motion";
 
 const counselors = [
   {
-    name: "Giri Sripathi",
+    name: "Mr. Sai Kumar ",
     title: "Lead Counselor & Founder",
     description:
       "With over 15 years of experience in NEET counseling and medical education, Giri has helped thousands of students secure admissions in top medical colleges.",
-    image: "/placeholder.png",
+    image: "/image1.png",
   },
   {
-    name: "Ms. Nita Siju",
+    name: "Ms. Nita Johnson",
     title: "Medical Education Specialist",
     description:
       "A former medical college professor with extensive knowledge of the NEET selection process and medical curriculum across India.",
-    image: "/placeholder.png",
+    image: "/image2.png",
   },
   {
-    name: "Mr. Surya Sripathi",
+    name: "Darshan Gowda",
     title: "Career Strategy Expert",
     description:
       "Specializes in helping students identify the best medical colleges based on their scores, preferences, and career aspirations.",
-    image: "/placeholder.png",
+    image: "/image3.png",
   },
   {
-    name: "Dr. Ananya Patel",
+    name: "Chitra ",
     title: "Exam Preparation Advisor",
     description:
       "Focuses on exam strategies and preparation techniques to help students maximize their NEET scores and opportunities.",
-    image: "/placeholder.png",
+    image: "/image4.png",
   },
 ];
 
@@ -205,7 +205,7 @@ const Name = styled.h3`
 
 const Title = styled.p`
   font-size: 14px;
-  color: #9B87F5;
+  color: #803F98;
   font-weight: 500;
   margin-bottom: 12px;
 `;

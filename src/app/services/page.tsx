@@ -230,7 +230,7 @@ const BottomText = styled.p`
 const SessionButton = styled.a`
   display: inline-block;
   padding: 0.7rem 1.5rem;
-  background-color: #9B87F5;
+  background-color: #803F98;
   color: #fff;
   border-radius: 8px;
   text-decoration: none;

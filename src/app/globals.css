@@ -6,7 +6,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #ffffff;
   --font-outfit: 'Outfit', sans-serif;
   --font-inter: 'Inter', sans-serif;
   --font-albert: 'Albert Sans', sans-serif;
@@ -15,7 +15,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #ffffff;
     --foreground: #ededed;
   }
 }

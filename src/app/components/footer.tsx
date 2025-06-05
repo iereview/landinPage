@@ -10,7 +10,9 @@ const Footer = () => {
         <Column>
           <Brand>
             <LogoContainer>
-              <LogoImage src="/Flogo.png" alt="Predicto Logo" />
+              <Link href="/">
+              <LogoImage src="/FLogo.png" alt="Predicto Logo" />
+              </Link>
             </LogoContainer>
             <Description>
               Expert NEET counseling services to guide you through your medical education journey.
@@ -90,7 +92,7 @@ export default Footer;
 // Styled Components
 
 const FooterWrapper = styled.footer`
-  background: #F9FAFB;
+  background: #FFFFFF;
   padding: 60px 150px;
   font-family: 'Inter', sans-serif;
 
@@ -214,7 +216,7 @@ const NewsletterForm = styled.div`
   }
 
   button {
-    background: #AA8AF4;
+    background: #803F98;
     color: white;
     padding: 10px 16px;
     border: none;

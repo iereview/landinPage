@@ -1,29 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const plans = [
   {
-    title: "Basic",
-    price: "₹2,999",
-    description: "Essential counseling for students who need core guidance",
-    features: [
-      "One 60-minute counseling session",
-      "Basic NEET strategy planning",
-      "Top 20 college recommendations",
-      "Email support for 1 week",
-    ],
-    buttonText: "Choose Basic",
-  },
-  {
     title: "Premium",
-    price: "₹7,999",
+    price: "₹10,000",
     description: "Comprehensive support for serious NEET aspirants",
     features: [
-      "Three 60-minute counseling sessions",
+      "Three 30-minute counseling sessions",
       "Detailed NEET strategy planning",
       "Personalized college recommendations",
       "Application assistance for up to 5 colleges",
@@ -32,22 +20,6 @@ const plans = [
     ],
     buttonText: "Choose Premium",
     highlight: true,
-  },
-  {
-    title: "Complete",
-    price: "₹14,999",
-    description: "End-to-end guidance throughout your NEET journey",
-    features: [
-      "Six 60-minute counseling sessions",
-      "Comprehensive NEET strategy planning",
-      "Complete college selection guidance",
-      "Full application support for all colleges",
-      "Document verification assistance",
-      "Priority email & phone support for 3 months",
-      "Post-admission guidance",
-      "One session with field specialists",
-    ],
-    buttonText: "Choose Complete",
   },
 ];
 
@@ -75,9 +47,32 @@ const cardVariants = {
   }),
 };
 
+// Keyframes for tick animation
+const draw = keyframes`
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+`;
+
+// Keyframes for cross animation
+const crossDraw = keyframes`
+  0% {
+    stroke-dashoffset: 150;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+`;
+
 export default function PlansSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const middleCardRef = useRef<HTMLDivElement>(null);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<null | "success" | "failure">(null);
 
   useEffect(() => {
     if (scrollRef.current && middleCardRef.current) {
@@ -92,6 +87,30 @@ export default function PlansSection() {
       scrollContainer.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
   }, []);
+
+  const handlePlanSelect = (plan: any) => {
+    setSelectedPlan(plan);
+    setIsPaymentOpen(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setIsPaymentOpen(false);
+    setPaymentStatus("success");
+  };
+
+  const handlePaymentFailure = () => {
+    setIsPaymentOpen(false);
+    setPaymentStatus("failure");
+  };
+
+  const handlePaymentCancel = () => {
+    setIsPaymentOpen(false);
+  };
+
+  const closeStatusModal = () => {
+    setPaymentStatus(null);
+    setSelectedPlan(null);
+  };
 
   return (
     <Wrapper id="plans">
@@ -143,7 +162,19 @@ export default function PlansSection() {
                 ))}
               </FeatureList>
             </CardContent>
-            <Button $highlight={plan.highlight}>{plan.buttonText}</Button>
+           <Button
+  $highlight={plan.highlight}
+  onClick={() => {
+    handlePlanSelect(plan);
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+  }}
+>
+  {plan.buttonText}
+</Button>
+
           </Card>
         ))}
       </CardsWrapper>
@@ -154,20 +185,28 @@ export default function PlansSection() {
         </Link>{" "}
         for personalized options.
       </Note>
+
     </Wrapper>
   );
 }
 
+
 // Styled components remain unchanged
 const Wrapper = styled.section`
   padding: 80px 24px;
-  background: #ffffff;
+  background: url("/BG.png") no-repeat center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #ffffff; 
   text-align: center;
+  min-height: 100vh;
 
   @media (max-width: 480px) {
     padding: 60px 16px;
   }
 `;
+
 
 const Heading = styled.h2`
   font-size: 36px;
@@ -218,7 +257,7 @@ const Subheading = styled.p`
 const CardsWrapper = styled.div`
   display: flex;
   gap: 24px;
-  justify-content: flex-start;
+  justify-content: center;  /* Changed from flex-start to center */
   overflow-x: auto;
   padding-bottom: 12px;
   scroll-padding: 20px;
@@ -232,7 +271,6 @@ const CardsWrapper = styled.div`
   }
 
   @media (min-width: 1024px) {
-    /* On large screens, disable scroll and use wrapping grid */
     overflow-x: visible;
     justify-content: center;
     flex-wrap: wrap;
@@ -250,13 +288,15 @@ const Card = styled.div<{ $highlight?: boolean }>`
       : "0 6px 18px rgba(0, 0, 0, 0.04)"};
   padding: 32px;
   width: 390px; 
-  flex: 0 0 auto; 
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
   will-change: transform;
   transition: box-shadow 0.3s ease;
+
+  margin: 0 auto; /* Add this line to center the card horizontally */
 
   &:hover {
     box-shadow: ${({ $highlight }) =>
@@ -268,8 +308,6 @@ const Card = styled.div<{ $highlight?: boolean }>`
   @media (min-width: 1024px) {
     width: 390px;
   }
-
-  
 
   @media (max-width: 480px) {
     padding: 24px;
@@ -351,7 +389,7 @@ const Feature = styled.li`
 `;
 
 const Button = styled.button<{ $highlight?: boolean }>`
-  background: ${({ $highlight }) => ($highlight ? "#9B87F5" : "#7E69AB")};
+  background: ${({ $highlight }) => ($highlight ? "#803F98" : "#7E69AB")};
   color: white;
   border: none;
   padding: 12px;

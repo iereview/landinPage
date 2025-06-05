@@ -7,7 +7,11 @@ import Link from 'next/link';
 // Styled Components
 const Section = styled.section`
   padding: 64px 150px;
-  background: #fff;
+  background: url("/BG.png") no-repeat center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #ffffff; 
 
   @media (max-width: 1024px) {
     padding: 64px 48px;
@@ -52,7 +56,7 @@ const MotionImageContainer = styled(motion.div)`
 const ImagePlaceholder = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url('/placeholder.svg');
+  background-image: url('/AboutImg.png');
   background-size: cover;
   background-position: center;
   border-radius: 16px;
@@ -72,7 +76,7 @@ const MotionBadge = styled(motion.div)`
   h4 {
     margin: 0;
     font-weight: 700;
-    color: #7e69ab;
+    color: #803F98;
     font-size: 20px;
 
     @media (max-width: 480px) {
@@ -83,7 +87,7 @@ const MotionBadge = styled(motion.div)`
   p {
     margin: 0;
     font-size: 0.85rem;
-    color: #7e69ab;
+    color: #803F98;
 
     @media (max-width: 480px) {
       font-size: 0.75rem;
@@ -191,7 +195,7 @@ const List = styled.ul`
 `;
 
 const MotionButton = styled(motion.button)`
-  background: #7e69ab;
+  background: #803F98;
   color: white;
   border: none;
   padding: 12px 24px;

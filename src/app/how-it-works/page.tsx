@@ -25,6 +25,12 @@ const steps = [
     description:
       "We'll help you identify the best colleges based on your NEET score, preferences, and location.",
   },
+   {
+    icon: "/icons/Support.png",
+    title: "College Application Assistance ",
+    description:
+      "Receive continuous assistance throughout the NEET process, ensuring you're always on the right track.",
+  },
   {
     icon: "/icons/Support.png",
     title: "Ongoing Support",
@@ -105,7 +111,7 @@ export default HowItWorks;
 // Styled Components
 
 const Wrapper = styled.section`
-  background: #fbfef6;
+  background: #803F9833;
   text-align: center;
   padding: 60px 20px;
 
@@ -170,9 +176,9 @@ const Subheading = styled.p`
 const CardGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
+  gap: 20px;
   justify-content: center;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto 40px;
 
   @media (max-width: 480px) {
@@ -238,7 +244,7 @@ const CardDescription = styled.p`
 `;
 
 const CTAButton = styled.button`
-  background: #9b87f5;
+  background: #803F98;
   color: #fff;
   font-family: "Inter", sans-serif;
   font-weight: 500;

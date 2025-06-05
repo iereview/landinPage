@@ -402,7 +402,7 @@ export default function ContactSection() {
   }, []);
 
   return (
-    <div id="contact" className="bg-yellow-50 py-20 px-6">
+    <div id="contact" className="bg-[#9B87F50F] py-20 px-6">
       {showToast && (
         <div className="fixed top-5 right-5 bg-green-500 text-white px-4 py-3 rounded-lg flex items-center shadow-lg z-50">
           <CheckCircle size={18} className="mr-2" />
@@ -556,12 +556,12 @@ export default function ContactSection() {
 
       <div className="max-w-7xl mx-auto px-3">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">
-            Have <span className="text-purple-500">Questions?</span> Get in Touch
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Our team is ready to answer any questions you might have about our NEET counseling services.
-          </p>
+           <h2 className="text-[clamp(28px,4vw,36px)] font-bold font-poppins text-[#1f1f1f] mb-3">
+    Have <span className="bg-gradient-to-r from-[#9B87F5] to-[#7E69AB] bg-clip-text text-transparent">Questions?</span> Get in Touch
+  </h2>
+  <p className="text-[clamp(14px,2vw,18px)] font-normal font-inter text-gray-600 max-w-[720px] mx-auto mb-12">
+    Our team is ready to answer any questions you might have about our NEET counseling services.
+  </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -624,7 +624,8 @@ export default function ContactSection() {
               <button
                 onClick={handleSubmit}
                 disabled={!isFormValid}
-                className="w-full bg-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                className="w-full text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+  style={{ backgroundColor: "#803F98" }}
                 type="button"
               >
                 Submit
@@ -674,14 +675,16 @@ export default function ContactSection() {
               <p className="text-gray-600 mb-6">
                 Schedule a free 30-minute consultation with our expert counselors to discuss your NEET journey.
               </p>
-              <button
-                onClick={() => setShowPaymentModal(true)}
-                className="w-full bg-purple-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 flex items-center justify-center space-x-2"
-                type="button"
-              >
-                <Calendar size={16} />
-                <span>Book via Calendly</span>
-              </button>
+             <button
+  onClick={() => setShowPaymentModal(true)}
+  type="button"
+  className="w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2 hover:opacity-90"
+  style={{ backgroundColor: "#803F98" }}
+>
+  <Calendar size={16} />
+  <span>Book via Calendly</span>
+</button>
+
             </div>
           </div>
         </div>
