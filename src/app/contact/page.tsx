@@ -699,9 +699,9 @@ export default function ContactSection() {
 
             {/* Book Consultation */}
             <div className="bg-white rounded-xl shadow-lg p-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Book a Free Consultation</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Book a Consultation</h3>
               <p className="text-gray-600 mb-6">
-                Schedule a free 30-minute consultation with our expert counselors to discuss your NEET journey.
+                Schedule a 30-minute consultation with our expert counselors to discuss your NEET journey.
               </p>
              <button
   onClick={() => setShowPaymentModal(true)}
