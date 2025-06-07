@@ -156,7 +156,7 @@ export default function PlansSection() {
               <FeatureList>
                 {plan.features.map((feature, j) => (
                   <Feature key={j}>
-                    <img src="/icons/tick.png" alt="tick" />
+                    <img src="https://d2coadv2i0didl.cloudfront.net/public/public/icons/tick.png" alt="tick" />
                     {feature}
                   </Feature>
                 ))}
@@ -194,7 +194,7 @@ export default function PlansSection() {
 // Styled components remain unchanged
 const Wrapper = styled.section`
   padding: 80px 24px;
-  background: url("/BG.png") no-repeat center center;
+  background: url("https://d2coadv2i0didl.cloudfront.net/public/public/BG.png") no-repeat center center;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

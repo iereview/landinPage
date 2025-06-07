@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['checkout.razorpay.com'],
+    domains: ['checkout.razorpay.com', 'd2coadv2i0didl.cloudfront.net'],
   },
-}
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig;

@@ -11,7 +11,7 @@ const Footer = () => {
           <Brand>
             <LogoContainer>
               <Link href="/">
-              <LogoImage src="/FLogo.png" alt="Predicto Logo" />
+              <LogoImage src="https://d2coadv2i0didl.cloudfront.net/public/public/Footlogo.png" alt="Predicto Logo" />
               </Link>
             </LogoContainer>
             <Description>

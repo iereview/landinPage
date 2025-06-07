@@ -40,17 +40,17 @@ const Services = () => {
       <CardGrid>
         {[
           {
-            icon: "/icons/personlized.png",
+            icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/personlized.png",
             title: "Personalized NEET Counseling",
             text: "One-on-one sessions with expert counselors from TIER, tailored to your specific needs and goals.",
           },
           {
-            icon: "/icons/Career.png",
+            icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Career.png",
             title: "Career Path Guidance",
             text: "Long-term career planning advice to help you navigate specializations and future opportunities in medicine.",
           },
           {
-            icon: "/icons/College.png",
+            icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/College.png",
             title: "College Selection Assistance",
             text: "Guidance on choosing the right medical college based on your score, preferences, location, and future prospects.",
           },

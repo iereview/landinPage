@@ -22,7 +22,7 @@ const Navbar = () => {
       <NavContainer>
         <LogoWrapper>
           <Link href="/">
-            <Image src="/Logo.png" alt="Predicto Logo" width={174} height={32} />
+            <Image src="https://d2coadv2i0didl.cloudfront.net/public/public/Logo.png" alt="Predicto Logo" width={174} height={32} />
           </Link>
         </LogoWrapper>
 

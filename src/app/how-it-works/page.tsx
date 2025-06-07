@@ -8,31 +8,31 @@ import { useInView } from "react-intersection-observer";
 
 const steps = [
   {
-    icon: "/icons/Cal.png",
+    icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Cal.png",
     title: "Schedule Your Consultation",
     description:
       "Book a free session through Calendly with our expert counselors at your preferred time.",
   },
   {
-    icon: "/icons/User.png",
+    icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/User.png",
     title: "Receive Personalized Counseling",
     description:
       "Get advice on your NEET strategy, exam preparation, and college selection tailored to your needs.",
   },
   {
-    icon: "/icons/University.png",
+    icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/University.png",
     title: "Explore College Options",
     description:
       "We'll help you identify the best colleges based on your NEET score, preferences, and location.",
   },
    {
-    icon: "/icons/Support.png",
+    icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Support.png",
     title: "College Application Assistance ",
     description:
       "Receive continuous assistance throughout the NEET process, ensuring you're always on the right track.",
   },
   {
-    icon: "/icons/Support.png",
+    icon: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Support.png",
     title: "Ongoing Support",
     description:
       "Receive continuous assistance throughout the NEET process, ensuring you're always on the right track.",
@@ -97,7 +97,7 @@ const HowItWorks = () => {
             variants={itemVariants}
             whileHover={{ scale: 1.05 }}
           >
-            <Image src="/icons/Calendar.png" alt="Calendar Icon" width={20} height={20} />
+            <Image src="https://d2coadv2i0didl.cloudfront.net/public/public/icons/Calendar.png" alt="Calendar Icon" width={20} height={20} />
             <span>Get Started</span>
           </CTAButton>
         </Link>

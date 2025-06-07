@@ -7,7 +7,7 @@ import Link from 'next/link';
 // Styled Components
 const Section = styled.section`
   padding: 64px 150px;
-  background: url("/BG.png") no-repeat center center;
+  background: url("https://d2coadv2i0didl.cloudfront.net/public/public/BG.png") no-repeat center center;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -56,7 +56,7 @@ const MotionImageContainer = styled(motion.div)`
 const ImagePlaceholder = styled.div`
   width: 100%;
   height: 100%;
-  background-image: url('/AboutImg.png');
+  background-image: url('https://d2coadv2i0didl.cloudfront.net/public/public/AboutImg.png');
   background-size: cover;
   background-position: center;
   border-radius: 16px;
@@ -181,7 +181,7 @@ const List = styled.ul`
       top: 3px;
       width: 16px;
       height: 16px;
-      background-image: url('/icons/tick.png');
+      background-image: url('https://d2coadv2i0didl.cloudfront.net/public/public/icons/tick.png');
       background-size: contain;
       background-repeat: no-repeat;
 

@@ -9,28 +9,28 @@ const testimonials = [
     subtext: "NEET 2023, Scored 650+",
     message:
       "Thanks to Predicto and the guidance from Giri sir, I got admission to my dream college. Their personalized approach helped me navigate the complex NEET counseling process with confidence.",
-    image: "/icons/Prisha.png",
+    image: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Prisha.png",
   },
   {
     name: "Anya Desai",
     subtext: "NEET 2023, Secured admission in top medical college",
     message:
       "The counselors at Predicto helped me understand my options based on my NEET score. Their insights were invaluable in making the right college choice for my future.",
-    image: "/icons/Anya.png",
+    image: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Anya.png",
   },
   {
     name: "Sneha Reddy",
     subtext: "NEET 2022, Now studying at prestigious medical institute",
     message:
       "I was confused about which college to choose, but Predicto's counselors provided detailed insights about different medical colleges, helping me make an informed decision.",
-    image: "/icons/Sneha.png",
+    image: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Sneha.png",
   },
   {
     name: "Rahul Sharma",
     subtext: "Parent of NEET 2023 student",
     message:
       "As parents, we were overwhelmed with the NEET process, but Giri and his team guided us step by step. Their expertise made the journey smooth for our child.",
-    image: "/icons/Rahul.png",
+    image: "https://d2coadv2i0didl.cloudfront.net/public/public/icons/Rahul.png",
   },
 ];
 

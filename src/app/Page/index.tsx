@@ -30,7 +30,7 @@ export default function Home() {
             <Link href="#contact" passHref>
               <PrimaryBtn whileHover={{ scale: 1.05 }}>
                 <Image
-                  src="/icons/Calendar.png"
+                  src="https://d2coadv2i0didl.cloudfront.net/public/public/icons/Calendar.png"
                   alt="Calendar Icon"
                   width={16}
                   height={16}
@@ -55,7 +55,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <Image
-            src="/HeroImg.png"
+            src="https://d2coadv2i0didl.cloudfront.net/public/public/HeroImg.png"
             alt="Hero Illustration"
             width={500}
             height={300}
