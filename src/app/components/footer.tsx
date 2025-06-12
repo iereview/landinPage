@@ -19,7 +19,7 @@ const Footer = () => {
             </Description>
             <ContactItem>
               <MapPin size={20} />
-              <span>Expert NEET counseling services to guide <br />you through your medical education <br />journey.</span>
+              <span>Vardhaman No. 179, 24, 27th A Cross Rd, Jayanagar 6th Block, Jayanagar, Bengaluru, Karnataka 560082</span>
             </ContactItem>
             <ContactItem>
               <Phone size={20} />
