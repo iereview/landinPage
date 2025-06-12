@@ -672,7 +672,7 @@ export default function ContactSection() {
                   <Phone size={20} className="text-purple-500 mt-1" />
                   <div>
                     <p className="font-medium text-gray-800">Phone</p>
-                    <p className="text-gray-600">+91 9876543210</p>
+                    <p className="text-gray-600">+91 9606910925</p>
                   </div>
                 </div>
 
@@ -680,7 +680,7 @@ export default function ContactSection() {
                   <Mail size={20} className="text-purple-500 mt-1" />
                   <div>
                     <p className="font-medium text-gray-800">Email</p>
-                    <p className="text-gray-600">contact@predicto.tier.app</p>
+                    <p className="text-gray-600">info@tiereview.com</p>
                   </div>
                 </div>
 
@@ -689,8 +689,8 @@ export default function ContactSection() {
                   <div>
                     <p className="font-medium text-gray-800">Office Address</p>
                     <p className="text-gray-600">
-                      123 Main Street, Bangalore<br />
-                      Karnataka, India - 560001
+                      Vardhaman No. 179, 24, 27th A Cross Rd, Jayanagar 6th <br/>
+                      Block, Jayanagar, Bengaluru, Karnataka 560082
                     </p>
                   </div>
                 </div>

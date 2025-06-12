@@ -33,7 +33,7 @@ const Services = () => {
         </Heading>
         <Subheading>
           We offer comprehensive guidance throughout your NEET journey, from exam preparation
-          to college selection.
+to college selection.
         </Subheading>
       </motion.div>
 

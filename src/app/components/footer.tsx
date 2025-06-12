@@ -19,15 +19,15 @@ const Footer = () => {
             </Description>
             <ContactItem>
               <MapPin size={20} />
-              <span>123 Main Street, Bangalore,<br />Karnataka, India</span>
+              <span>Expert NEET counseling services to guide <br />you through your medical education <br />journey.</span>
             </ContactItem>
             <ContactItem>
               <Phone size={20} />
-              <span>+91 9876543210</span>
+              <span>+91 9606910925</span>
             </ContactItem>
             <ContactItem>
               <Mail size={20} />
-              <span>contact@predicto.tier.app</span>
+              <span>info@tiereview.com</span>
             </ContactItem>
           </Brand>
         </Column>

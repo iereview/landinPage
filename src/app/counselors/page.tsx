@@ -8,21 +8,21 @@ const counselors = [
     name: "Mr. Sai Kumar ",
     title: "Lead Counselor & Founder",
     description:
-      "With over 15 years of experience in NEET counseling and medical education, Giri has helped thousands of students secure admissions in top medical colleges.",
+      "With over 5 years of experience in NEET counseling and medical education, Sai has helped thousands of students secure admissions in top medical colleges.",
     image: "https://d2coadv2i0didl.cloudfront.net/public/public/image1.png",
   },
   {
     name: "Ms. Nita Johnson",
     title: "Medical Education Specialist",
     description:
-      "A former medical college professor with extensive knowledge of the NEET selection process and medical curriculum across India.",
+      "A trained counseller with extensive knowledge of the NEET selection process and medical curriculum across India.",
     image: "https://d2coadv2i0didl.cloudfront.net/public/public/image2.png",
   },
   {
     name: "Darshan Gowda",
     title: "Career Strategy Expert",
     description:
-      "Specializes in helping students identify the best medical colleges based on their scores, preferences, and career aspirations.",
+      "Focuses on exam strategies and preparation techniques to help students maximize their NEET scores and opportunities.",
     image: "https://d2coadv2i0didl.cloudfront.net/public/public/image3.png",
   },
   {

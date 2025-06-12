@@ -253,7 +253,7 @@ export default function AboutPage() {
             <li>Expert counselors with years of experience in NEET guidance</li>
             <li>Personalized approach tailored to your specific needs and goals</li>
             <li>Comprehensive support throughout the entire NEET journey</li>
-            <li>Direct access to Giri Sripathi and TIER's expert team</li>
+            <li>Direct access to S. Giri Sripathi Sir and The Indian Education Review's expert team</li>
             <li>Proven track record of successful student placements</li>
           </List>
           <Link href="#services" legacyBehavior>

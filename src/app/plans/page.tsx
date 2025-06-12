@@ -130,8 +130,7 @@ export default function PlansSection() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.6 }}
       >
-        We offer flexible, affordable counseling packages to suit your needs.
-        Choose the one that works for you and pay securely via Razorpay.
+        We offer flexible, affordable counseling packages to suit your needs. Choose the one that works for you and pay securely via Razorpay.
       </Subheading>
       <CardsWrapper
         as={motion.div}

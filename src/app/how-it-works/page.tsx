@@ -75,8 +75,7 @@ const HowItWorks = () => {
           How We <Highlight>Help You</Highlight>
         </Heading>
         <Subheading as={motion.p} variants={itemVariants}>
-          Our process is designed to make your NEET journey smooth and successful
-          with expert guidance at every step.
+          Our process is designed to make your NEET journey smooth and successful with expert guidance at every step.
         </Subheading>
 
         <CardGrid as={motion.div} variants={containerVariants}>

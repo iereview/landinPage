@@ -17,8 +17,7 @@ export default function Home() {
           <Title>NEET Counselling Assistance –</Title>
           <Subtitle>Secure Your MBBS Future with Predicto</Subtitle>
           <Description>
-            Expert guidance by Giri Sripathy and our team to help you navigate
-            the NEET admission process and college selection with confidence.
+            Expert guidance by renowned Chemistry Professor and Chief Mentor S.Giri Sripathi Sir and our team to help you navigate the NEET admission process and college selection with confidence.
           </Description>
 
           <MotionButtons
