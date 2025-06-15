@@ -22,7 +22,7 @@ const counselors = [
     name: "Darshan Gowda",
     title: "Career Strategy Expert",
     description:
-      "Focuses on exam strategies and preparation techniques to help students maximize their NEET scores and opportunities.",
+      "Specializes in helping students identify the best medical colleges based on their scores, preferences, and career aspirations.",
     image: "https://d2coadv2i0didl.cloudfront.net/public/public/image3.png",
   },
   {

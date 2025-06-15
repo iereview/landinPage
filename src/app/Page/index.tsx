@@ -35,7 +35,7 @@ export default function Home() {
                   height={16}
                   style={{ marginRight: "8px" }}
                 />
-                Book a Free Consultation
+                Book a Consultation
               </PrimaryBtn>
             </Link>
 
