@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 const plans = [
   {
-    title: "Premium",
+    title: "NEET Counselling Service",
     price: "₹10,000",
     description: "Comprehensive support for serious NEET aspirants",
     features: [
