@@ -97,9 +97,9 @@ const CounselorsSection = () => {
           viewport={{ once: true }}
           custom={counselors.length + 1}
         >
-          <Note>
+          {/* <Note>
             Our team has helped thousands of students navigate the complexities of NEET admissions and college selection. With our guidance, you're in safe hands.
-          </Note>
+          </Note> */}
         </motion.div>
       </Container>
     </Section>
@@ -109,14 +109,14 @@ const CounselorsSection = () => {
 export default CounselorsSection;
 
 
-
 // Styled Components
+
 const Section = styled.section`
   padding: 80px 150px;
   background: #fff;
   font-family: "Inter", sans-serif;
 
-    @media (max-width: 1024px) {
+  @media (max-width: 1024px) {
     padding: 64px 48px;
   }
 
@@ -147,7 +147,6 @@ const Heading = styled.h2`
   }
 `;
 
-
 const Subtext = styled.p`
   text-align: center;
   font-size: clamp(14px, 2vw, 18px);
@@ -162,17 +161,18 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 32px;
+  align-items: stretch;
 `;
 
 const Card = styled.div`
-  background: #Ffffff;
+  background: #ffffff;
   border: 1px solid #F3F4F6;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-  text-align: left;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const ImageWrapper = styled.div`
@@ -181,18 +181,20 @@ const ImageWrapper = styled.div`
   height: 220px;
   background: #eaeaea;
 
-    @media (max-width: 1024px) {
-     height: 280px;
+  @media (max-width: 1024px) {
+    height: 280px;
   }
 
   @media (max-width: 480px) {
     height: 280px;
   }
-
 `;
 
 const Info = styled.div`
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 `;
 
 const Name = styled.h3`
@@ -216,7 +218,9 @@ const Description = styled.p`
   font-family: "Inter", sans-serif;
   color: #4B5563;
   line-height: 1.5;
+  margin: 0;
 `;
+
 
 const Note = styled.div`
   max-width: 760px;
@@ -234,4 +238,3 @@ const Note = styled.div`
     padding: 12px 16px;
   }
 `;
-
