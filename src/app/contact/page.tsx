@@ -710,7 +710,7 @@ export default function ContactSection() {
   style={{ backgroundColor: "#803F98" }}
 >
   <Calendar size={16} />
-  <span>Book via Calendly</span>
+  <span>Book Now!</span>
 </button>
 
             </div>

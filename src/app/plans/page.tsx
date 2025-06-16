@@ -18,7 +18,7 @@ const plans = [
       "Email & phone support for 1 month",
       "Access to exclusive resources",
     ],
-    buttonText: "Choose Premium",
+    buttonText: "Book Now!",
     highlight: true,
   },
 ];

@@ -54,7 +54,7 @@ export default function Home() {
           viewport={{ once: true }}
         >
           <Image
-            src="https://d2coadv2i0didl.cloudfront.net/public/public/HeroImg.png"
+            src="/HeroImage.png"
             alt="Hero Illustration"
             width={500}
             height={300}
