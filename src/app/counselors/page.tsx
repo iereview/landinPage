@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 const counselors = [
   {
     name: "Mr. Sai Kumar ",
-    title: "Lead Counselor & Founder",
+    title: "Lead Counselor",
     description:
       "With over 5 years of experience in NEET counseling and medical education, Sai has helped thousands of students secure admissions in top medical colleges.",
     image: "https://d2coadv2i0didl.cloudfront.net/public/public/image1.png",
